@@ -3,15 +3,8 @@ from mcp.server.fastmcp import FastMCP
 import sqlite3
 import os
 
-# FastAPI app
+# Create FastAPI app
 app = FastAPI()
-
-# Database path
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "community.db")
-
-# MCP server
-mcp = FastMCP("bechtel Chatters")
 
 # Root endpoint
 @app.get("/")
@@ -22,6 +15,13 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "healthy"}
+
+# Database path
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "community.db")
+
+# Create MCP server
+mcp = FastMCP("bechtel Chatters")
 
 # MCP tool
 @mcp.tool()
@@ -48,7 +48,5 @@ def get_top_chatters():
     except Exception as e:
         return {"error": str(e)}
 
-# Mount MCP app
-mcp_app = mcp.streamable_http_app()
-
-app.mount("/mcp", mcp_app)
+# IMPORTANT: Mount MCP app
+app.mount("/mcp", mcp.streamable_http_app())
