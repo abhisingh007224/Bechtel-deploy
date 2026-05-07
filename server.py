@@ -16,6 +16,13 @@ def root():
 def health():
     return {"status": "healthy"}
 
+# Debug endpoint
+@app.get("/debug")
+def debug():
+    return {
+        "mcp_mounted": True
+    }
+
 # Database path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "community.db")
