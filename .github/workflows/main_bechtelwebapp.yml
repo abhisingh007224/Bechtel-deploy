@@ -63,4 +63,4 @@ jobs:
         with:
           app-name: 'bechtelwebapp'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6A23702D43F5421CA269C07355A655E6 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_18B6D7CDC1F5431ABB0547F843D08B8F }}
