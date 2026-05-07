@@ -1,37 +1,59 @@
 from mcp.server.fastmcp import FastMCP
+from fastapi import FastAPI
 import sqlite3
 import os
 
-# Get the absolute path to the database file in the same folder as this script
+# FastAPI app
+app = FastAPI()
+
+# Root endpoint
+@app.get("/")
+def root():
+    return {"message": "MCP Server Running"}
+
+# Health endpoint
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
+
+# Database path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "community.db")
 
-
-# Initialize the MCP server with a friendly name
+# MCP server
 mcp = FastMCP("bechtel Chatters")
 
-# Define a tool to fetch the top chatters from the SQLite database
+# MCP Tool
 @mcp.tool()
 def get_top_chatters():
     """Retrieve the top chatters sorted by number of messages."""
     try:
-        # Connect to the SQLite database
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
 
-        # Execute the query to fetch chatters sorted by messages
-        cursor.execute("SELECT name, messages FROM chatters ORDER BY messages DESC")
+        cursor.execute("""
+            SELECT name, messages
+            FROM chatters
+            ORDER BY messages DESC
+        """)
+
         results = cursor.fetchall()
         conn.close()
 
-        # Format the results as a list of dictionaries
-        chatters = [{"name": name, "messages": messages} for name, messages in results]
-        return chatters
+        return [
+            {"name": name, "messages": messages}
+            for name, messages in results
+        ]
 
     except Exception as e:
         return {"error": str(e)}
 
-# Run the MCP server locally
+# Run MCP server
 if __name__ == '__main__':
     print(f"Using database at: {DB_PATH}")
-    mcp.run(transport="streamable-http")
+
+    mcp.run(
+        transport="streamable-http",
+        host="0.0.0.0",
+        port=8000
+    )
