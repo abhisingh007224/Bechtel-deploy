@@ -4,3 +4,7 @@ mcp-use>=1.2.7
 mcp[cli]>=1.6.0
 nest-asyncio>=1.6.0
 requests>=2.31.0
+fastapi
+uvicorn
+gunicorn
+mcp
