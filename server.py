@@ -49,4 +49,6 @@ def get_top_chatters():
         return {"error": str(e)}
 
 # IMPORTANT: Mount MCP app
-app.mount("/mcp", mcp.streamable_http_app())
+mcp_app = mcp.sse_app()
+
+app.mount("/mcp", mcp_app)
