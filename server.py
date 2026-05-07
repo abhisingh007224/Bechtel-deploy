@@ -1,27 +1,6 @@
-from fastapi import FastAPI
 from mcp.server.fastmcp import FastMCP
 import sqlite3
 import os
-
-# Create FastAPI app
-app = FastAPI()
-
-# Root endpoint
-@app.get("/")
-def root():
-    return {"message": "MCP Server Running"}
-
-# Health endpoint
-@app.get("/health")
-def health():
-    return {"status": "healthy"}
-
-# Debug endpoint
-@app.get("/debug")
-def debug():
-    return {
-        "mcp_mounted": True
-    }
 
 # Database path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -30,10 +9,10 @@ DB_PATH = os.path.join(BASE_DIR, "community.db")
 # Create MCP server
 mcp = FastMCP("bechtel Chatters")
 
-# MCP tool
 @mcp.tool()
 def get_top_chatters():
     """Retrieve the top chatters sorted by number of messages."""
+
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
@@ -55,7 +34,5 @@ def get_top_chatters():
     except Exception as e:
         return {"error": str(e)}
 
-# IMPORTANT: Mount MCP app
-mcp_app = mcp.sse_app()
-
-app.mount("/mcp", mcp_app)
+# MCP app as ASGI app
+app = mcp.streamable_http_app()
